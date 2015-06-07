@@ -1,0 +1,15 @@
+#wrapper {
+	text-align:  center;
+}
+
+#playstop {
+	width: 90%;
+	max-width: 400px;
+	height: 5em;
+	line-height: 3.5em;
+	margin-top: 4em;
+}
+
+#setsine, #setsquare, #settriangle {
+	margin-top: 2em;
+}
