@@ -1,0 +1,10 @@
+#wrapper {
+	width: 100%;
+	background-color: #ccc;
+}
+
+#setsine, #setsquare, #settriangle {
+	display: inline-block;
+	width: 30%;
+	background-color: #666;
+}

@@ -1,27 +1,22 @@
 <html>
-<head><title>random tone generator</title></head>
+<head><title>random tone generator</title>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
 <script src="wad/build/wad.min.js"></script>
 <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
 <body>
-	<a href="#" id="playstop">play</a>
+	
+	<div id="wrapper">
+		<a href="#" id="setsine">sine</a>
+		<a href="#" id="setsquare">square</a>
+		<a href="#" id="settriangle">triangle</a>
+		<a href="#" id="playstop">play</a>
+	</div>
+	
+	
 <script type="text/javascript">
-	$('#playstop').click(function(){
-		if(stopped){
-			$(this).html("stop");
-			stopped = false;
-			playRandom();
-		} else {
-			$(this).html("play");
-			stopped = true;
-			bell.stop();
-		}
-	});
 
-	var stopped = true;
-
-	// create instrument
-
-	var bell = new Wad({source : 'sine',
+var bell = new Wad({source : 'sine',
 	env : {
 		        attack : .02,
 		        decay : .1,
@@ -29,17 +24,141 @@
 		        hold : .4,
 		        release : .1
 		    }
+});
+	
+$('#setsine').click(function(){
+		bell = new Wad({source : 'sine',
+	env : {
+		        attack : .02,
+		        decay : .1,
+		        sustain : .9,
+		        hold : .4,
+		        release : .1
+		    }
+	});
+		bell.setVolume(1)
+});
+	
+$('#setsquare').click(function(){
+		bell = new Wad({source : 'square',
+	env : {
+		        attack : .02,
+		        decay : .1,
+		        sustain : .9,
+		        hold : .4,
+		        release : .1
+		    }
+	});
+		bell.setVolume(.2)
+});
 
+$('#settriangle').click(function(){
+		bell = new Wad({source : 'triangle',
+	env : {
+		        attack : .02,
+		        decay : .1,
+		        sustain : .9,
+		        hold : .4,
+		        release : .1
+		    }
+	});
+		bell.setVolume(1)
+});
+
+	var stopped = true;
+	
+	// set waveform
+	
+
+	// create instrument
+
+var inbetween = new Wad({source : 'sine',
+		env : {
+		        attack : .02,
+		        decay : .1,
+		        sustain : .9,
+		        hold : .4,
+		        release : .1
+		    }
 });
 
 
+	function playFirst() {
+		if(!stopped){
+			window.randomNum = Math.round(Math.random()*200 + 100);
+			console.log("randomnum is now "+ randomNum);
+		}
+		playRandom();
+	}
+
 	function playRandom(){
 		if(!stopped){
-			bell.play({ pitch : Math.round(Math.random()*200 + 100) }); // access pitch etc like this
-			setTimeout(playRandom,1000 + Math.random()*500); // and loop it in an annoying way
+
+			var randomNext = Math.round(Math.random()*200 + 100);
+			console.log("randomNext is now " + randomNext);
+
+			var howManyCents = Math.abs(randomNum - randomNext);
+			console.log(howManyCents + " cents");
+
+			if (randomNum < randomNext) {
+				console.log("descending!");
+
+				var inbetweenNum = randomNum + 1;
+
+				for (var i = 0; i < howManyCents; i++) {
+					inbetweenNum = randomNum + i;
+					console.log("inbetween number is " + inbetweenNum);
+
+					inbetween.play({ pitch : inbetweenNum, wait: 1500 });
+					console.log("played inbetween up"); 
+				}
+				bell.play({ pitch : randomNext, wait: 10 });
+			console.log("played randomnext" + randomNext);
+
+			randomNum = randomNext;
+			console.log("randomnum is now" + randomNum);
+
+			} else {
+				console.log("ascending!");
+
+				var inbetweenNum = randomNum - 1;
+
+				for (var i = 0; i > howManyCents; i--) {
+
+					inbetweenNum = randomNum - i;
+					console.log("inbetween number is " + inbetweenNum); 
+
+					inbetween.play({ pitch : inbetweenNum, wait: 0.01 });
+					console.log("played inbetween down");
+				}
+				bell.play({ pitch : randomNext, wait: 10 });
+			console.log("played randomnext" + randomNext);
+
+			randomNum = randomNext;
+			console.log("randomnum is now" + randomNum);
+			} 
+
+			setTimeout(playRandom,1500); // and loop it in an annoying way
 		}
 	}
 
+
+
+
+$('#playstop').click(function(){
+		if(stopped){
+			$(this).html("stop");
+			stopped = false;
+
+			playFirst();
+
+
+		} else {
+			$(this).html("play");
+			stopped = true;
+			bell.stop();
+		}
+	});
 </script>
 </body>
 </html>
